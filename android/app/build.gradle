@@ -1,0 +1,92 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    compileSdkVersion 30
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId "com.example.quit_product"
+        minSdkVersion 16
+        targetSdkVersion 30
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    signingConfigs {
+
+            release {
+                    keyAlias 'key'
+                    keyPassword 'tdc520'
+                    storeFile file('key.jks')//此种写法默认key文件在android-app文件夹下
+                    storePassword 'tdc520'
+    //            keyAlias keystoreProperties['keyAlias']
+    //            keyPassword keystoreProperties['keyPassword']
+    //            storeFile file(keystoreProperties['storeFile'])
+    //            storePassword keystoreProperties['storePassword']
+            }
+            debug {
+                keyAlias 'key'
+                keyPassword 'tdc520'
+                storeFile file('key.jks')
+                storePassword 'tdc520'
+    //            keyAlias keystoreProperties['keyAlias']
+    //            keyPassword keystoreProperties['keyPassword']
+    //            storeFile file(keystoreProperties['storeFile'])
+    //            storePassword keystoreProperties['storePassword']
+            }
+        }
+    buildTypes {
+            release {
+                signingConfig signingConfigs.release
+            }
+            debug {
+                signingConfig signingConfigs.release
+            }
+        }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
